@@ -31,25 +31,13 @@ class ViewController: UIViewController, SketchViewDelegate {
     sketchView.lineColor = UIColor.white
     sketchView.sketchViewDelegate = self
 
-    // Download the model from Firebase
-    print("Fetching model...")
-    ModelDownloader.fetchParameterizedModel { (filePath, error) in
-      guard let path = filePath else {
-        if let error = error {
-          print(error)
-        }
-        return
-      }
-      print("Model download complete")
-
-      // Initialize a DigitClassifier instance
-      DigitClassifier.newInstance(modelPath: path) { result in
-        switch result {
-        case let .success(classifier):
-          self.classifier = classifier
-        case .error(_):
-          self.resultLabel.text = "Failed to initialize."
-        }
+    // Initialize a DigitClassifier instance
+    DigitClassifier.newInstance() { result in
+      switch result {
+      case let .success(classifier):
+        self.classifier = classifier
+      case .error(_):
+        self.resultLabel.text = "Failed to initialize."
       }
     }
   }
@@ -62,7 +50,7 @@ class ViewController: UIViewController, SketchViewDelegate {
 
   /// Called when the user taps "Yes" under "Was this correct?"
   @IBAction func correctButtonPressed(_ sender: Any) {
-    Analytics.logEvent("correct_inference", parameters: nil)
+
   }
 
   /// Callback executed every time there is a new drawing
@@ -91,7 +79,6 @@ class ViewController: UIViewController, SketchViewDelegate {
       switch result {
       case let .success((classificationResult, maxConfidence)):
         self.resultLabel.text = classificationResult
-        Analytics.logEvent("digit_classification", parameters: ["confidence": maxConfidence])
       case .error(_):
         self.resultLabel.text = "Failed to classify drawing."
       }

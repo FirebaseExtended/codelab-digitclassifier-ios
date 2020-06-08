@@ -55,94 +55,17 @@ class ModelDownloader {
 
   static func downloadModel(named name: String,
                             completion: @escaping (RemoteModel?, DownloadError?) -> Void) {
-    guard FirebaseApp.app() != nil else {
-      completion(nil, .firebaseNotInitialized)
-      return
-    }
-    guard success == nil && failure == nil else {
-      completion(nil, .downloadInProgress)
-      return
-    }
 
-    let remoteModel = CustomRemoteModel(name: name)
-    let conditions = ModelDownloadConditions(allowsCellularAccess: true,
-                                             allowsBackgroundDownloading: true)
-
-    success = NotificationCenter.default.addObserver(forName: .firebaseMLModelDownloadDidSucceed,
-                                                     object: nil,
-                                                     queue: nil) { (notification) in
-      defer { success = nil; failure = nil }
-      guard let userInfo = notification.userInfo,
-          let model = userInfo[ModelDownloadUserInfoKey.remoteModel.rawValue] as? RemoteModel
-      else {
-        completion(nil, .downloadReturnedEmptyModel)
-        return
-      }
-      guard model.name == name else {
-        completion(nil, .downloadReturnedWrongModel)
-        return
-      }
-      completion(model, nil)
-    }
-    failure = NotificationCenter.default.addObserver(forName: .firebaseMLModelDownloadDidFail,
-                                                     object: nil,
-                                                     queue: nil) { (notification) in
-      defer { success = nil; failure = nil }
-      guard let userInfo = notification.userInfo,
-          let error = userInfo[ModelDownloadUserInfoKey.error.rawValue] as? Error
-      else {
-        completion(nil, .mlkitError(underlyingError: DownloadError.unknownError))
-        return
-      }
-      completion(nil, .mlkitError(underlyingError: error))
-    }
-    ModelManager.modelManager().download(remoteModel, conditions: conditions)
   }
 
   // Attempts to fetch the model from disk, downloading the model if it does not already exist.
   static func fetchModel(named name: String,
                          completion: @escaping (String?, DownloadError?) -> Void) {
-    let remoteModel = CustomRemoteModel(name: name)
-    if ModelManager.modelManager().isModelDownloaded(remoteModel) {
-      ModelManager.modelManager().getLatestModelFilePath(remoteModel) { (path, error) in
-        completion(path, error.map { DownloadError.mlkitError(underlyingError: $0) })
-      }
-    } else {
-      downloadModel(named: name) { (model, error) in
-        guard let model = model else {
-          let underlyingError = error ?? DownloadError.unknownError
-          let compositeError = DownloadError.mlkitError(underlyingError: underlyingError)
-          completion(nil, compositeError)
-          return
-        }
-        ModelManager.modelManager().getLatestModelFilePath(model) { (path, pathError) in
-          completion(path, error.map { DownloadError.mlkitError(underlyingError: $0) })
-        }
-      }
-    }
+
   }
 
   static func fetchParameterizedModel(completion: @escaping (String?, DownloadError?) -> Void) {
-    RemoteConfig.remoteConfig().fetchAndActivate { (status, error) in
-      DispatchQueue.main.async {
-        if let error = error {
-          let compositeError = DownloadError.mlkitError(underlyingError: error)
-          completion(nil, compositeError)
-          return
-        }
 
-        let modelName: String
-        if let name = RemoteConfig.remoteConfig().configValue(forKey: "model_name").stringValue {
-          modelName = name
-        } else {
-          let defaultName = "mnist_v1"
-          print("Unable to fetch model name from config, falling back to default \(defaultName)")
-          modelName = defaultName
-        }
-
-        fetchModel(named: modelName, completion: completion)
-      }
-    }
   }
 
 }

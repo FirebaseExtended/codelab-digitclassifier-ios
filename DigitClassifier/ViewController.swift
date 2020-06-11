@@ -14,7 +14,6 @@
 
 import UIKit
 import Sketch
-import Firebase
 
 class ViewController: UIViewController, SketchViewDelegate {
 

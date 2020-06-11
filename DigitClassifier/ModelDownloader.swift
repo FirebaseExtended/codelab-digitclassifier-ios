@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import Firebase
+import UIKit
 
 class ModelDownloader {
 
@@ -53,19 +53,6 @@ class ModelDownloader {
     case unknownError
   }
 
-  static func downloadModel(named name: String,
-                            completion: @escaping (RemoteModel?, DownloadError?) -> Void) {
-
-  }
-
-  // Attempts to fetch the model from disk, downloading the model if it does not already exist.
-  static func fetchModel(named name: String,
-                         completion: @escaping (String?, DownloadError?) -> Void) {
-
-  }
-
-  static func fetchParameterizedModel(completion: @escaping (String?, DownloadError?) -> Void) {
-
-  }
+  // Add new methods here
 
 }

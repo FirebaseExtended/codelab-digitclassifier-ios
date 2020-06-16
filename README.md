@@ -1,6 +1,9 @@
-# Digit Classifier iOS sample
+# Add Firebase to your TFLite-powered iOS App
 
 <img src="https://storage.googleapis.com/khanhlvg-public.appspot.com/digit-classifier/screenshot_ios.png" />
+
+This is the source repository accompanying the codelab of the same name which can be
+found here. (link coming soon)
 
 ## Requirements
 

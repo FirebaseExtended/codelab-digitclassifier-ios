@@ -4,6 +4,6 @@ target 'DigitClassifier' do
   use_frameworks!
   
   pod 'Sketch'
-  pod 'TensorFlowLiteSwift' 
+  pod 'TensorFlowLiteSwift', '~> 2.3.0'
 
 end

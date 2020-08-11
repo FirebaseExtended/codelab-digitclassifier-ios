@@ -15,6 +15,7 @@
 import CoreImage
 import UIKit
 import TensorFlowLite
+import Firebase
 
 class DigitClassifier {
 
@@ -83,6 +84,12 @@ class DigitClassifier {
   ///   - completion: callback to receive the classification result.
   func classify(image: UIImage, completion: @escaping ((Result<(String, Float)>) -> ())) {
     DispatchQueue.global(qos: .background).async {
+      // Track inference with Firebase Performance
+      let inferenceTrace = Performance.startTrace(name: "tflite inference")
+      defer {
+        inferenceTrace?.stop()
+      }
+
       let outputTensor: Tensor
       do {
         // Preprocessing: Convert the input UIImage to (28 x 28) grayscale image to feed to TF Lite model.

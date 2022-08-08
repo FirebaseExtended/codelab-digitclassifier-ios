@@ -14,7 +14,7 @@
 
 import UIKit
 import Sketch
-import Firebase
+import FirebaseAnalytics
 
 class ViewController: UIViewController, SketchViewDelegate {
 
@@ -33,18 +33,19 @@ class ViewController: UIViewController, SketchViewDelegate {
 
     // Download the model from Firebase
     print("Fetching model...")
-    ModelDownloader.fetchParameterizedModel { (filePath, error) in
-      guard let path = filePath else {
+    ModelLoader.fetchParameterizedModel { (customModel, error) in
+      guard let customModel = customModel else {
         if let error = error {
           print(error)
         }
         return
       }
+
       print("Model download complete")
 
       // Initialize a DigitClassifier instance
-      DigitClassifier.newInstance(modelPath: path) { result in
-        switch result {
+      DigitClassifier.newInstance(modelPath: customModel.path) { result in
+      switch result {
         case let .success(classifier):
           self.classifier = classifier
         case .error(_):

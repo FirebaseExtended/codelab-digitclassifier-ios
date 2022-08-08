@@ -5,9 +5,8 @@ target 'DigitClassifier' do
   
   pod 'Sketch'
   pod 'TensorFlowLiteSwift', '~> 2.3.0'
-  pod 'Firebase/MLModelInterpreter'
-  pod 'Firebase/Performance'
-  pod 'Firebase/Analytics'
-  pod 'Firebase/RemoteConfig'
-
+  pod 'FirebaseMLModelDownloader', '9.3.0-beta'
+  pod 'FirebaseAnalytics'
+  pod 'FirebasePerformance'
+  pod 'FirebaseRemoteConfig'
 end

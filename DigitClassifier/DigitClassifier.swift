@@ -15,7 +15,7 @@
 import CoreImage
 import UIKit
 import TensorFlowLite
-import Firebase
+import FirebasePerformance
 
 class DigitClassifier {
 
